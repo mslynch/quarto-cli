@@ -12,7 +12,18 @@ import { Tar } from "archive/tar.ts";
 
 import { PublishFiles } from "../provider-types.ts";
 import { TempContext } from "../../core/temp-types.ts";
-import { md5Hash } from "../../core/hash.ts";
+
+import { crypto } from "https://deno.land/std@0.185.0/crypto/mod.ts";
+
+async function md5(data: Uint8Array): Promise<string> {
+  const hashBuffer = crypto.subtle.digestSync(
+    "MD5",
+    data,
+  );
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 export async function createBundle(
   type: "site" | "document",
@@ -24,8 +35,9 @@ export async function createBundle(
   for (const file of files.files) {
     const filePath = join(files.baseDir, file);
     if (Deno.statSync(filePath).isFile) {
-      const f = Deno.readTextFileSync(filePath);
-      manifestFiles[file] = { checksum: md5Hash(f) as string };
+      const fBytes = Deno.readFileSync(filePath);
+      const checksum = await md5(fBytes);
+      manifestFiles[file] = { checksum };
     }
   }
 

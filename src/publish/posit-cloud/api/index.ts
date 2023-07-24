@@ -169,7 +169,8 @@ export class PositCloudClient {
         return await response.text() as unknown as T;
       }
     } else if (response.status >= 400) {
-      console.log(`**** body=${response.body}`);
+      const text = await response.text();
+      console.log(`**** body=${text}`);
       throw new ApiError(response.status, response.statusText);
     } else {
       throw new Error(`${response.status} - ${response.statusText}`);

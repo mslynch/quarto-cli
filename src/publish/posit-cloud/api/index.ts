@@ -151,7 +151,7 @@ export class PositCloudClient {
     };
     const request = new Request(url, requestInit);
 
-    console.log(`**** url=${request.url}`);
+    console.log(`**** request: ${method} ${request.url}`);
     return await this.handleResponse<T>(
       await fetch(request),
     );

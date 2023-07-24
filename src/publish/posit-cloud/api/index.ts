@@ -151,6 +151,7 @@ export class PositCloudClient {
     };
     const request = new Request(url, requestInit);
 
+    console.log(`**** url=${request.url}`);
     return await this.handleResponse<T>(
       await fetch(request),
     );
@@ -168,9 +169,7 @@ export class PositCloudClient {
         return await response.text() as unknown as T;
       }
     } else if (response.status >= 400) {
-      console.log("**** RESPONSE BODY ****");
-      console.log(response.text);
-      console.log("**** END RESPONSE BODY ****");
+      console.log(`**** body=${response.body}`);
       throw new ApiError(response.status, response.statusText);
     } else {
       throw new Error(`${response.status} - ${response.statusText}`);
